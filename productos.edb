@@ -1,7 +1,7 @@
 <<HEADSTART>>
 name: productos
 cols: 5
-rows: 0
+rows: 2
 <<HEADEND>>
 
 <<DATA>>
