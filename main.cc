@@ -18,6 +18,8 @@ typedef struct
     size_t rows;
 } table_header_t;
 
+// extraemos una lista de tuplas (clave: valor) genéricas, esto sirve para separar
+// el header
 std::vector<std::tuple<std::string, std::string>> tokenize(std::string str)
 {
 
@@ -40,6 +42,7 @@ std::vector<std::tuple<std::string, std::string>> tokenize(std::string str)
     return result;
 }
 
+// Parseamos el header en un table_header_t*
 void getHeader(std::string headstr, table_header_t *head)
 {
     std::vector<std::tuple<std::string, std::string>> kvpairs = tokenize(headstr);
@@ -59,8 +62,10 @@ int main()
     std::string buffer;
     table_header_t head;
 
+    // leemos el archivo linea por linea, extraemos cada linea y la colocamos en el buffer
     while (getline(productos, buffer))
     {
+        // si encontramos <<HEADSTART>> leemos el head y lo guardamos en un table_header_t
         if (buffer.compare(IDENTIFIER_HEADSTART) == 0)
         {
             std::string headstr;
@@ -76,11 +81,14 @@ int main()
             getHeader(headstr, &head);
             continue;
         }
+
+        // section: TODO
+
         if (buffer.compare(IDENTIFIER_HEADEND) == 0)
         {
             continue;
         }
-
+        // Acá se extraerían los datos
         if (buffer.compare(IDENTIFIER_DATA) == 0)
         {
             continue;
