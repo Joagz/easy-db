@@ -1,0 +1,16 @@
+<<HEADSTART>>
+name: productos
+cols: 5
+rows: 0
+<<HEADEND>>
+
+<<DATA>>
+id, name, price, description, stock
+1, "ejemplo", 1000, "producto de ejemplo", 100
+2, "ejemplo 2", 1000, "producto de ejemplo 2", 100
+<<EOF>>
+
+
+
+
+
