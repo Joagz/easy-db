@@ -3,6 +3,7 @@
 #include <vector>
 #include <tuple>
 #include <sstream>
+#include <algorithm>
 
 #define IDENTIFIER_HEADSTART "<<HEADSTART>>"
 #define IDENTIFIER_HEADEND "<<HEADEND>>"
@@ -20,14 +21,17 @@ typedef struct
 
 // extraemos una lista de tuplas (clave: valor) genéricas, esto sirve para separar
 // el header
-std::vector<std::tuple<std::string, std::string>> tokenize(std::string str)
+std::vector<std::tuple<std::string, std::string>> tokenize(std::string str, char separator)
 {
-
+    // antes de procesar, removemos todos los espacios
+    std::string::iterator endpos = std::remove(str.begin(), str.end(), ' ');
+    str.erase(endpos, str.end());
+            
     std::vector<std::tuple<std::string, std::string>> result;
     std::stringstream ss(str);
     std::string token;
 
-    while (std::getline(ss, token, ZONE_SEPARATOR))
+    while (std::getline(ss, token, separator))
     {
         size_t sep = token.find(':');
         if (sep != std::string::npos)
@@ -45,7 +49,7 @@ std::vector<std::tuple<std::string, std::string>> tokenize(std::string str)
 // Parseamos el header en un table_header_t*
 void getHeader(std::string headstr, table_header_t *head)
 {
-    std::vector<std::tuple<std::string, std::string>> kvpairs = tokenize(headstr);
+    std::vector<std::tuple<std::string, std::string>> kvpairs = tokenize(headstr, ZONE_SEPARATOR);
 
     head->name = std::get<1>(kvpairs.at(0));
     head->cols = std::atoi(std::get<1>(kvpairs.at(1)).c_str());
