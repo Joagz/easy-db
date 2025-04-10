@@ -45,7 +45,8 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "optional": "cpp"
     },
     "cSpell.words": [
         "productos"

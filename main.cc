@@ -10,6 +10,7 @@
 #define IDENTIFIER_DATA "<<DATA>>"
 #define IDENTIFIER_EOF "<<EOF>>"
 #define ZONE_SEPARATOR '\n'
+#define DATA_SEPARATOR ','
 #define BUFFER_SIZE 512
 
 typedef struct
@@ -19,14 +20,34 @@ typedef struct
     size_t rows;
 } table_header_t;
 
+typedef struct
+{
+    int id;
+    std::string name;
+    float price;
+    std::string description;
+    int stock;
+} table_data_t;
+
+void remove_whitespace(std::string *ptr)
+{
+    std::string::iterator pos = std::remove(ptr->begin(), ptr->end(), ' ');
+    ptr->erase(pos, ptr->end());
+}
+
+void remove_first_whitespace(std::string *ptr)
+{
+    auto it = std::find(ptr->begin(), ptr->end(), ' ');
+    if (it != ptr->end())
+        ptr->erase(it);
+}
+
 // extraemos una lista de tuplas (clave: valor) genéricas, esto sirve para separar
 // el header
 std::vector<std::tuple<std::string, std::string>> tokenize(std::string str, char separator)
 {
-    // antes de procesar, removemos todos los espacios
-    std::string::iterator endpos = std::remove(str.begin(), str.end(), ' ');
-    str.erase(endpos, str.end());
-            
+    remove_whitespace(&str);
+
     std::vector<std::tuple<std::string, std::string>> result;
     std::stringstream ss(str);
     std::string token;
@@ -47,7 +68,7 @@ std::vector<std::tuple<std::string, std::string>> tokenize(std::string str, char
 }
 
 // Parseamos el header en un table_header_t*
-void getHeader(std::string headstr, table_header_t *head)
+void get_header(std::string headstr, table_header_t *head)
 {
     std::vector<std::tuple<std::string, std::string>> kvpairs = tokenize(headstr, ZONE_SEPARATOR);
 
@@ -58,6 +79,21 @@ void getHeader(std::string headstr, table_header_t *head)
     std::cout << "head->name: " << head->name << "\n";
     std::cout << "head->cols: " << head->cols << "\n";
     std::cout << "head->rows: " << head->rows << "\n";
+}
+
+std::vector<std::string> tokenize_table(std::string datastr)
+{
+    std::vector<std::string> result;
+    std::stringstream ss(datastr);
+    std::string token;
+
+    while (std::getline(ss, token, DATA_SEPARATOR))
+    {
+        remove_first_whitespace(&token);
+        result.push_back(token);
+    }
+
+    return result;
 }
 
 int main()
@@ -82,7 +118,7 @@ int main()
                 headstr.append(str);
             }
 
-            getHeader(headstr, &head);
+            get_header(headstr, &head);
             continue;
         }
 
@@ -95,6 +131,13 @@ int main()
         // Acá se extraerían los datos
         if (buffer.compare(IDENTIFIER_DATA) == 0)
         {
+            table_data_t data;
+            while (getline(productos, buffer) && buffer.compare(IDENTIFIER_EOF) != 0)
+            {
+                std::vector<std::string> tokens = tokenize_table(buffer);
+
+               
+            }
             continue;
         }
 
